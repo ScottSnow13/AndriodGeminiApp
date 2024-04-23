@@ -26,3 +26,4 @@ class FFAppState extends ChangeNotifier {
     _ImagePath = value;
   }
 }
+ 
