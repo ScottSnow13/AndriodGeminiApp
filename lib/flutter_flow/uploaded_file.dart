@@ -1,5 +1,5 @@
-import 'dart:convert';
-import 'dart:typed_data' show Uint8List;
+import 'dart:convert'; // Importing dart:convert for JSON serialization.
+import 'dart:typed_data' show Uint8List; // Importing Uint8List from dart:typed_data for handling byte data.
 
 class FFUploadedFile {
   const FFUploadedFile({
@@ -10,16 +10,18 @@ class FFUploadedFile {
     this.blurHash,
   });
 
-  final String? name;
-  final Uint8List? bytes;
-  final double? height;
-  final double? width;
-  final String? blurHash;
+  final String? name; // Name of the uploaded file.
+  final Uint8List? bytes; // Byte data of the uploaded file.
+  final double? height; // Height of the uploaded file (if applicable).
+  final double? width; // Width of the uploaded file (if applicable).
+  final String? blurHash; // Blur hash of the uploaded file.
 
+  // Override toString method to provide a string representation of the object.
   @override
   String toString() =>
       'FFUploadedFile(name: $name, bytes: ${bytes?.length ?? 0}, height: $height, width: $width, blurHash: $blurHash,)';
 
+  // Method to serialize the object to JSON.
   String serialize() => jsonEncode(
         {
           'name': name,
@@ -30,6 +32,7 @@ class FFUploadedFile {
         },
       );
 
+  // Static method to deserialize a JSON string into an FFUploadedFile object.
   static FFUploadedFile deserialize(String val) {
     final serializedData = jsonDecode(val) as Map<String, dynamic>;
     final data = {
@@ -48,6 +51,7 @@ class FFUploadedFile {
     );
   }
 
+  // Override hashCode getter.
   @override
   int get hashCode => Object.hash(
         name,
@@ -57,6 +61,7 @@ class FFUploadedFile {
         blurHash,
       );
 
+  // Override equality operator.
   @override
   bool operator ==(other) =>
       other is FFUploadedFile &&
