@@ -1,10 +1,11 @@
+// Import necessary files and packages
 import '/flutter_flow/flutter_flow_util.dart';
 import 'main_widget.dart' show MainWidget;
 import 'package:flutter/material.dart';
 
+// Define MainModel class extending FlutterFlowModel
 class MainModel extends FlutterFlowModel<MainWidget> {
-  ///  State fields for stateful widgets in this page.
-
+  // State fields for stateful widgets in this page.
   final unfocusNode = FocusNode();
   bool isDataUploading = false;
   FFUploadedFile uploadedLocalFile =
@@ -18,6 +19,7 @@ class MainModel extends FlutterFlowModel<MainWidget> {
 
   @override
   void dispose() {
+    // Dispose the unfocusNode
     unfocusNode.dispose();
   }
 }
