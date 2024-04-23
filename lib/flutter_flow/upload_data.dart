@@ -1,18 +1,20 @@
-import 'dart:async';
+import 'dart:async'; // Importing asynchronous operations support.
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:mime_type/mime_type.dart';
-import 'package:video_player/video_player.dart';
+import 'package:file_picker/file_picker.dart'; // Importing file picker package for selecting files.
+import 'package:flutter/material.dart'; // Importing Flutter material package.
+import 'package:flutter/foundation.dart'; // Importing foundation library from Flutter.
+import 'package:google_fonts/google_fonts.dart'; // Importing Google Fonts package for styling text.
+import 'package:image_picker/image_picker.dart'; // Importing image picker package for selecting images.
+import 'package:mime_type/mime_type.dart'; // Importing mime_type package for detecting file MIME type.
+import 'package:video_player/video_player.dart'; // Importing video player package for playing videos.
 
-import 'flutter_flow_theme.dart';
-import 'flutter_flow_util.dart';
+import 'flutter_flow_theme.dart'; // Importing custom Flutter Flow theme.
+import 'flutter_flow_util.dart'; // Importing utility functions from Flutter Flow.
 
+// Set of allowed file formats.
 const allowedFormats = {'image/png', 'image/jpeg', 'video/mp4', 'image/gif'};
 
+// Data class to represent selected file information.
 class SelectedFile {
   const SelectedFile({
     this.storagePath = '',
@@ -21,28 +23,31 @@ class SelectedFile {
     this.dimensions,
     this.blurHash,
   });
-  final String storagePath;
-  final String? filePath;
-  final Uint8List bytes;
-  final MediaDimensions? dimensions;
-  final String? blurHash;
+  final String storagePath; // Storage path for the file.
+  final String? filePath; // File path.
+  final Uint8List bytes; // File bytes.
+  final MediaDimensions? dimensions; // Dimensions of the media file.
+  final String? blurHash; // Blur hash of the media file.
 }
 
+// Data class to represent media dimensions.
 class MediaDimensions {
   const MediaDimensions({
     this.height,
     this.width,
   });
-  final double? height;
-  final double? width;
+  final double? height; // Height of the media.
+  final double? width; // Width of the media.
 }
 
+// Enumeration representing different media sources.
 enum MediaSource {
   photoGallery,
   videoGallery,
   camera,
 }
 
+// Function to select media with a bottom sheet dialog.
 Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
   required BuildContext context,
   String? storageFolderPath,
@@ -57,6 +62,7 @@ Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
   bool includeDimensions = false,
   bool includeBlurHash = false,
 }) async {
+  // Helper function to create upload media list tile.
   createUploadMediaListTile(String label, MediaSource mediaSource) => ListTile(
             title: Text(
               label,
@@ -75,6 +81,8 @@ Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
               mediaSource,
             ),
           );
+  
+  // Showing bottom sheet to choose media source.
   final mediaSource = await showModalBottomSheet<MediaSource>(
       context: context,
       backgroundColor: backgroundColor,
@@ -131,9 +139,13 @@ Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
           ],
         );
       });
+  
+  // If no media source selected, return null.
   if (mediaSource == null) {
     return null;
   }
+  
+  // Selecting media based on the chosen source.
   return selectMedia(
     storageFolderPath: storageFolderPath,
     maxWidth: maxWidth,
@@ -147,6 +159,7 @@ Future<List<SelectedFile>?> selectMediaWithSourceBottomSheet({
   );
 }
 
+// Function to select media based on provided parameters.
 Future<List<SelectedFile>?> selectMedia({
   String? storageFolderPath,
   double? maxWidth,
@@ -158,8 +171,9 @@ Future<List<SelectedFile>?> selectMedia({
   bool includeDimensions = false,
   bool includeBlurHash = false,
 }) async {
-  final picker = ImagePicker();
+  final picker = ImagePicker(); // Creating ImagePicker instance.
 
+  // If selecting multiple images.
   if (multiImage) {
     final pickedMediaFuture = picker.pickMultiImage(
       maxWidth: maxWidth,
@@ -190,6 +204,7 @@ Future<List<SelectedFile>?> selectMedia({
     }));
   }
 
+  // If selecting single image or video.
   final source = mediaSource == MediaSource.camera
       ? ImageSource.camera
       : ImageSource.gallery;
@@ -223,6 +238,7 @@ Future<List<SelectedFile>?> selectMedia({
   ];
 }
 
+// Function to validate file format.
 bool validateFileFormat(String filePath, BuildContext context) {
   if (allowedFormats.contains(mime(filePath))) {
     return true;
@@ -235,6 +251,7 @@ bool validateFileFormat(String filePath, BuildContext context) {
   return false;
 }
 
+// Function to select a single file.
 Future<SelectedFile?> selectFile({
   String? storageFolderPath,
   List<String>? allowedExtensions,
@@ -245,6 +262,7 @@ Future<SelectedFile?> selectFile({
       multiFile: false,
     ).then((value) => value?.first);
 
+// Function to select multiple files.
 Future<List<SelectedFile>?> selectFiles({
   String? storageFolderPath,
   List<String>? allowedExtensions,
@@ -286,6 +304,7 @@ Future<List<SelectedFile>?> selectFiles({
   ];
 }
 
+// Function to convert selected uploaded files to SelectedFile objects.
 List<SelectedFile> selectedFilesFromUploadedFiles(
   List<FFUploadedFile> uploadedFiles, {
   String? storageFolderPath,
@@ -306,6 +325,7 @@ List<SelectedFile> selectedFilesFromUploadedFiles(
       },
     ).toList();
 
+// Function to get image dimensions.
 Future<MediaDimensions> _getImageDimensions(Uint8List mediaBytes) async {
   final image = await decodeImageFromList(mediaBytes);
   return MediaDimensions(
@@ -314,6 +334,7 @@ Future<MediaDimensions> _getImageDimensions(Uint8List mediaBytes) async {
   );
 }
 
+// Function to get video dimensions.
 Future<MediaDimensions> _getVideoDimensions(String path) async {
   final VideoPlayerController videoPlayerController =
       VideoPlayerController.asset(path);
@@ -322,6 +343,7 @@ Future<MediaDimensions> _getVideoDimensions(String path) async {
   return MediaDimensions(width: size.width, height: size.height);
 }
 
+// Function to get storage path for the file.
 String _getStoragePath(
   String? pathPrefix,
   String filePath,
@@ -330,19 +352,19 @@ String _getStoragePath(
 ]) {
   pathPrefix = _removeTrailingSlash(pathPrefix);
   final timestamp = DateTime.now().microsecondsSinceEpoch;
-  // Workaround fixed by https://github.com/flutter/plugins/pull/3685
-  // (not yet in stable).
   final ext = isVideo ? 'mp4' : filePath.split('.').last;
   final indexStr = index != null ? '_$index' : '';
   return '$pathPrefix/$timestamp$indexStr.$ext';
 }
 
+// Function to get storage path for signature.
 String getSignatureStoragePath([String? pathPrefix]) {
   pathPrefix = _removeTrailingSlash(pathPrefix);
   final timestamp = DateTime.now().microsecondsSinceEpoch;
   return '$pathPrefix/signature_$timestamp.png';
 }
 
+// Function to show upload message.
 void showUploadMessage(
   BuildContext context,
   String message, {
@@ -372,6 +394,7 @@ void showUploadMessage(
     );
 }
 
+// Function to remove trailing slash from a path.
 String? _removeTrailingSlash(String? path) => path != null && path.endsWith('/')
     ? path.substring(0, path.length - 1)
     : path;
