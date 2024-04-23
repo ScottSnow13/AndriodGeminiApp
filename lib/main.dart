@@ -7,15 +7,21 @@ import 'flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
 void main() async {
+  // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Enable URL strategy for web
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
 
+  // Initialize FlutterFlowTheme
   await FlutterFlowTheme.initialize();
 
-  final appState = FFAppState(); // Initialize FFAppState
+  // Create and initialize FFAppState
+  final appState = FFAppState();
   await appState.initializePersistedState();
 
+  // Run the app
   runApp(ChangeNotifierProvider(
     create: (context) => appState,
     child: const MyApp(),
@@ -23,12 +29,12 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
 
+  // Static method to access _MyAppState from context
   static _MyAppState of(BuildContext context) =>
       context.findAncestorStateOfType<_MyAppState>()!;
 }
@@ -45,13 +51,16 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    // Initialize AppStateNotifier and router
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
 
+    // Set a timer to stop displaying splash image after 2 seconds
     Future.delayed(const Duration(milliseconds: 2000),
         () => setState(() => _appStateNotifier.stopShowingSplashImage()));
   }
 
+  // Method to set the theme mode
   void setThemeMode(ThemeMode mode) => setState(() {
         _themeMode = mode;
         FlutterFlowTheme.saveThemeMode(mode);
