@@ -1,3 +1,4 @@
+// Import necessary files and packages
 import '/backend/gemini/gemini.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'main_model.dart';
 export 'main_model.dart';
 
+// Define a StatefulWidget named MainWidget
 class MainWidget extends StatefulWidget {
   const MainWidget({super.key});
 
@@ -15,34 +17,41 @@ class MainWidget extends StatefulWidget {
   State<MainWidget> createState() => _MainWidgetState();
 }
 
+// Define the state for MainWidget
 class _MainWidgetState extends State<MainWidget> {
+  // Initialize a MainModel instance
   late MainModel _model;
 
+  // Create a GlobalKey for the scaffold
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    // Create the MainModel instance using createModel method
     _model = createModel(context, () => MainModel());
   }
 
   @override
   void dispose() {
+    // Dispose the model
     _model.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Watch for changes in FFAppState
     context.watch<FFAppState>();
 
+    // GestureDetector to handle taps outside text fields
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
+        // Set background color
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(75.0),
@@ -73,6 +82,7 @@ class _MainWidgetState extends State<MainWidget> {
             alignment: const AlignmentDirectional(0.0, 0.0),
             child: Stack(
               children: [
+                // Background image
                 Opacity(
                   opacity: 0.15,
                   child: Align(
@@ -93,6 +103,7 @@ class _MainWidgetState extends State<MainWidget> {
                   padding: EdgeInsets.zero,
                   scrollDirection: Axis.vertical,
                   children: [
+                    // Conditional rendering based on FFAppState
                     if (FFAppState().ImagePath != 'uploaded')
                       Opacity(
                         opacity: 0.0,
@@ -126,24 +137,26 @@ class _MainWidgetState extends State<MainWidget> {
                           ),
                         ),
                       ),
+                    // Upload button
                     Align(
                       alignment: const AlignmentDirectional(0.0, 0.9),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: FFButtonWidget(
                           onPressed: () async {
+                            // Show media picker bottom sheet
                             final selectedMedia =
                                 await selectMediaWithSourceBottomSheet(
                               context: context,
                               allowPhoto: true,
                               pickerFontFamily: 'Ubuntu',
                             );
+                            // Validate selected media files
                             if (selectedMedia != null &&
                                 selectedMedia.every((m) => validateFileFormat(
                                     m.storagePath, context))) {
                               setState(() => _model.isDataUploading = true);
                               var selectedUploadedFiles = <FFUploadedFile>[];
-
                               try {
                                 selectedUploadedFiles = selectedMedia
                                     .map((m) => FFUploadedFile(
@@ -168,19 +181,17 @@ class _MainWidgetState extends State<MainWidget> {
                                 return;
                               }
                             }
-
+                            // Generate text from uploaded image
                             await geminiTextFromImage(
                               context,
-                              'You are one of the best zoologists in the world. When looking at the image look at coloration and patternes to help identify the animal. Please add this information for a single animal with bullet points and breaks in between each piece of information:  Disclaimer: (Add disclaimer about respecting all animals no matter their danger level  include that it may not be the correct animal due to AI problems.)     Status of: (Not inherently dangerous.) (Proceed with Caution.)  (Dangerous, do not interact!)     Name of Animal: (Input animal name here)     What to do if attacked or bitten by the animal:    About Animal: (Include Appearance, Behavior, Diet, and Habitat) ',
+                              'You are one of the best zoologists in the world. When looking at the image look at coloration and patterns to help identify the animal. Please add this information for a single animal with bullet points and breaks in between each piece of information:  Disclaimer: (Add disclaimer about respecting all animals no matter their danger level. Include that it may not be the correct animal due to AI problems.)     Status of: (Not inherently dangerous.) (Proceed with Caution.)  (Dangerous, do not interact!)     Name of Animal: (Input animal name here)     What to do if attacked or bitten by the animal:    About Animal: (Include Appearance, Behavior, Diet, and Habitat) ',
                               uploadImageBytes: _model.uploadedLocalFile,
                             ).then((generatedText) {
                               safeSetState(() => _model.output = generatedText);
                             });
-
                             setState(() {
                               FFAppState().ImagePath = 'uploaded';
                             });
-
                             setState(() {});
                           },
                           text: 'Upload',
