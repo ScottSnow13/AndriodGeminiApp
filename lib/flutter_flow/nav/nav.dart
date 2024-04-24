@@ -1,37 +1,43 @@
+// Import necessary packages and files
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '/index.dart'; // Import index.dart file (not clear from provided code)
+import '/flutter_flow/flutter_flow_theme.dart'; // Import Flutter Flow theme
+import '/flutter_flow/flutter_flow_util.dart'; // Import Flutter Flow utilities
 
-import '/index.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+// Export necessary packages
+export 'package:go_router/go_router.dart'; // Export go_router package
+export 'serialization_util.dart'; // Export serialization utilities
 
-export 'package:go_router/go_router.dart';
-export 'serialization_util.dart';
-
+// Define a constant key for transition information
 const kTransitionInfoKey = '__transition_info__';
 
+// Define a class for managing application state
 class AppStateNotifier extends ChangeNotifier {
-  AppStateNotifier._();
+  AppStateNotifier._(); // Private constructor
 
-  static AppStateNotifier? _instance;
+  static AppStateNotifier? _instance; // Singleton instance
   static AppStateNotifier get instance => _instance ??= AppStateNotifier._();
 
+  // State variable to control showing splash image
   bool showSplashImage = true;
 
+  // Method to stop showing splash image
   void stopShowingSplashImage() {
     showSplashImage = false;
-    notifyListeners();
+    notifyListeners(); // Notify listeners of state change
   }
 }
 
+// Function to create a router
 GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
-      initialLocation: '/',
-      debugLogDiagnostics: true,
-      refreshListenable: appStateNotifier,
+      initialLocation: '/', // Initial location for the router
+      debugLogDiagnostics: true, // Enable debug log diagnostics
+      refreshListenable: appStateNotifier, // Listens for state changes
       errorBuilder: (context, state) => appStateNotifier.showSplashImage
           ? Builder(
+              // Show splash image if specified
               builder: (context) => Container(
                 color: FlutterFlowTheme.of(context).primary,
                 child: Center(
@@ -44,11 +50,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 ),
               ),
             )
-          : const MainWidget(),
+          : const MainWidget(), // Show main widget otherwise
       routes: [
+        // Define routes
         FFRoute(
           name: '_initialize',
           path: '/',
+          // Route builder for showing splash image or main widget
           builder: (context, _) => appStateNotifier.showSplashImage
               ? Builder(
                   builder: (context) => Container(
@@ -63,17 +71,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                     ),
                   ),
                 )
-              : const MainWidget(),
+              : const MainWidget(), // Show main widget
         ),
         FFRoute(
           name: 'Main',
           path: '/main',
-          builder: (context, params) => const MainWidget(),
+          builder: (context, params) => const MainWidget(), // Main route
         )
-      ].map((r) => r.toRoute(appStateNotifier)).toList(),
+      ].map((r) => r.toRoute(appStateNotifier)).toList(), // Convert routes to GoRouter routes
     );
 
+// Extension for handling navigation parameters
 extension NavParamExtensions on Map<String, String?> {
+  // Method to filter out null values
   Map<String, String> get withoutNulls => Map.fromEntries(
         entries
             .where((e) => e.value != null)
@@ -81,30 +91,35 @@ extension NavParamExtensions on Map<String, String?> {
       );
 }
 
+// Extension for navigation utilities
 extension NavigationExtensions on BuildContext {
+  // Method to safely pop from navigation stack
   void safePop() {
-    // If there is only one route on the stack, navigate to the initial
-    // page instead of popping.
     if (canPop()) {
-      pop();
+      pop(); // Pop if possible
     } else {
-      go('/');
+      go('/'); // Go to initial page otherwise
     }
   }
 }
 
+// Extension for GoRouter state
 extension _GoRouterStateExtensions on GoRouterState {
+  // Get extra map from state
   Map<String, dynamic> get extraMap =>
       extra != null ? extra as Map<String, dynamic> : {};
+  // Get all parameters
   Map<String, dynamic> get allParams => <String, dynamic>{}
     ..addAll(pathParameters)
     ..addAll(uri.queryParameters)
     ..addAll(extraMap);
+  // Get transition information
   TransitionInfo get transitionInfo => extraMap.containsKey(kTransitionInfoKey)
       ? extraMap[kTransitionInfoKey] as TransitionInfo
       : TransitionInfo.appDefault();
 }
 
+// Class for handling parameters in routes
 class FFParameters {
   FFParameters(this.state, [this.asyncParams = const {}]);
 
@@ -113,8 +128,7 @@ class FFParameters {
 
   Map<String, dynamic> futureParamValues = {};
 
-  // Parameters are empty if the params map is empty or if the only parameter
-  // present is the special extra parameter reserved for the transition info.
+  // Check if parameters are empty
   bool get isEmpty =>
       state.allParams.isEmpty ||
       (state.extraMap.length == 1 &&
@@ -122,6 +136,7 @@ class FFParameters {
   bool isAsyncParam(MapEntry<String, dynamic> param) =>
       asyncParams.containsKey(param.key) && param.value is String;
   bool get hasFutures => state.allParams.entries.any(isAsyncParam);
+  // Complete async futures
   Future<bool> completeFutures() => Future.wait(
         state.allParams.entries.where(isAsyncParam).map(
           (param) async {
@@ -136,6 +151,7 @@ class FFParameters {
         ),
       ).onError((_, __) => [false]).then((v) => v.every((e) => e));
 
+  // Get parameter value
   dynamic getParam<T>(
     String paramName,
     ParamType type, [
@@ -148,11 +164,9 @@ class FFParameters {
       return null;
     }
     final param = state.allParams[paramName];
-    // Got parameter from `extras`, so just directly return it.
     if (param is! String) {
       return param;
     }
-    // Return serialized value.
     return deserializeParam<T>(
       param,
       type,
@@ -161,6 +175,7 @@ class FFParameters {
   }
 }
 
+// Class representing a route
 class FFRoute {
   const FFRoute({
     required this.name,
@@ -178,10 +193,12 @@ class FFRoute {
   final Widget Function(BuildContext, FFParameters) builder;
   final List<GoRoute> routes;
 
+  // Convert FFRoute to GoRoute
   GoRoute toRoute(AppStateNotifier appStateNotifier) => GoRoute(
         name: name,
         path: path,
         pageBuilder: (context, state) {
+          // Fix status bar on iOS 16 and below
           fixStatusBarOniOS16AndBelow(context);
           final ffParams = FFParameters(state, asyncParams);
           final page = ffParams.hasFutures
@@ -190,67 +207,4 @@ class FFRoute {
                   builder: (context, _) => builder(context, ffParams),
                 )
               : builder(context, ffParams);
-          final child = page;
-
-          final transitionInfo = state.transitionInfo;
-          return transitionInfo.hasTransition
-              ? CustomTransitionPage(
-                  key: state.pageKey,
-                  child: child,
-                  transitionDuration: transitionInfo.duration,
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          PageTransition(
-                    type: transitionInfo.transitionType,
-                    duration: transitionInfo.duration,
-                    reverseDuration: transitionInfo.duration,
-                    alignment: transitionInfo.alignment,
-                    child: child,
-                  ).buildTransitions(
-                    context,
-                    animation,
-                    secondaryAnimation,
-                    child,
-                  ),
-                )
-              : MaterialPage(key: state.pageKey, child: child);
-        },
-        routes: routes,
-      );
-}
-
-class TransitionInfo {
-  const TransitionInfo({
-    required this.hasTransition,
-    this.transitionType = PageTransitionType.fade,
-    this.duration = const Duration(milliseconds: 300),
-    this.alignment,
-  });
-
-  final bool hasTransition;
-  final PageTransitionType transitionType;
-  final Duration duration;
-  final Alignment? alignment;
-
-  static TransitionInfo appDefault() => const TransitionInfo(hasTransition: false);
-}
-
-class RootPageContext {
-  const RootPageContext(this.isRootPage, [this.errorRoute]);
-  final bool isRootPage;
-  final String? errorRoute;
-
-  static bool isInactiveRootPage(BuildContext context) {
-    final rootPageContext = context.read<RootPageContext?>();
-    final isRootPage = rootPageContext?.isRootPage ?? false;
-    final location = GoRouterState.of(context).uri.toString();
-    return isRootPage &&
-        location != '/' &&
-        location != rootPageContext?.errorRoute;
-  }
-
-  static Widget wrap(Widget child, {String? errorRoute}) => Provider.value(
-        value: RootPageContext(true, errorRoute),
-        child: child,
-      );
-}
+         
