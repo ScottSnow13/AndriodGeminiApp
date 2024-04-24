@@ -1,3 +1,4 @@
+//Provides methods to manipulate and interact with latitude and longitude values.
 class LatLng {
   const LatLng(this.latitude, this.longitude);
   final double latitude;
