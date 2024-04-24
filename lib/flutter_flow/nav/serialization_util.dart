@@ -1,22 +1,25 @@
-import 'dart:convert';
-
+// Import necessary packages and files
+import 'dart:convert'; // For encoding and decoding JSON
 import 'package:flutter/material.dart';
-import 'package:from_css_color/from_css_color.dart';
+import 'package:from_css_color/from_css_color.dart'; // For converting CSS color to Color
 
-import '../../flutter_flow/lat_lng.dart';
-import '../../flutter_flow/place.dart';
-import '../../flutter_flow/uploaded_file.dart';
+// Import custom Flutter classes
+import '../../flutter_flow/lat_lng.dart'; // Custom class for representing latitude and longitude
+import '../../flutter_flow/place.dart'; // Custom class for representing a place
+import '../../flutter_flow/uploaded_file.dart'; // Custom class for representing an uploaded file
 
 /// SERIALIZATION HELPERS
 
+// Function to convert DateTimeRange to string
 String dateTimeRangeToString(DateTimeRange dateTimeRange) {
   final startStr = dateTimeRange.start.millisecondsSinceEpoch.toString();
   final endStr = dateTimeRange.end.millisecondsSinceEpoch.toString();
-  return '$startStr|$endStr';
+  return '$startStr|$endStr'; // Combine start and end milliseconds with '|'
 }
 
+// Function to convert FFPlace to string
 String placeToString(FFPlace place) => jsonEncode({
-      'latLng': place.latLng.serialize(),
+      'latLng': place.latLng.serialize(), // Serialize latLng
       'name': place.name,
       'address': place.address,
       'city': place.city,
@@ -25,9 +28,11 @@ String placeToString(FFPlace place) => jsonEncode({
       'zipCode': place.zipCode,
     });
 
+// Function to convert FFUploadedFile to string
 String uploadedFileToString(FFUploadedFile uploadedFile) =>
-    uploadedFile.serialize();
+    uploadedFile.serialize(); // Serialize uploaded file
 
+// Function to serialize a parameter
 String? serializeParam(
   dynamic param,
   ParamType paramType, [
@@ -39,11 +44,11 @@ String? serializeParam(
     }
     if (isList) {
       final serializedValues = (param as Iterable)
-          .map((p) => serializeParam(p, paramType, false))
+          .map((p) => serializeParam(p, paramType, false)) // Serialize each element
           .where((p) => p != null)
           .map((p) => p!)
           .toList();
-      return json.encode(serializedValues);
+      return json.encode(serializedValues); // Encode list to JSON
     }
     switch (paramType) {
       case ParamType.int:
@@ -61,7 +66,7 @@ String? serializeParam(
       case ParamType.LatLng:
         return (param as LatLng).serialize();
       case ParamType.Color:
-        return (param as Color).toCssString();
+        return (param as Color).toCssString(); // Convert Color to CSS string
       case ParamType.FFPlace:
         return placeToString(param as FFPlace);
       case ParamType.FFUploadedFile:
@@ -82,34 +87,37 @@ String? serializeParam(
 
 /// DESERIALIZATION HELPERS
 
+// Function to convert string to DateTimeRange
 DateTimeRange? dateTimeRangeFromString(String dateTimeRangeStr) {
-  final pieces = dateTimeRangeStr.split('|');
+  final pieces = dateTimeRangeStr.split('|'); // Split by '|'
   if (pieces.length != 2) {
     return null;
   }
   return DateTimeRange(
-    start: DateTime.fromMillisecondsSinceEpoch(int.parse(pieces.first)),
-    end: DateTime.fromMillisecondsSinceEpoch(int.parse(pieces.last)),
+    start: DateTime.fromMillisecondsSinceEpoch(int.parse(pieces.first)), // Parse start
+    end: DateTime.fromMillisecondsSinceEpoch(int.parse(pieces.last)), // Parse end
   );
 }
 
+// Function to convert string to LatLng
 LatLng? latLngFromString(String? latLngStr) {
   final pieces = latLngStr?.split(',');
   if (pieces == null || pieces.length != 2) {
     return null;
   }
   return LatLng(
-    double.parse(pieces.first.trim()),
-    double.parse(pieces.last.trim()),
+    double.parse(pieces.first.trim()), // Parse latitude
+    double.parse(pieces.last.trim()), // Parse longitude
   );
 }
 
+// Function to convert string to FFPlace
 FFPlace placeFromString(String placeStr) {
   final serializedData = jsonDecode(placeStr) as Map<String, dynamic>;
   final data = {
     'latLng': serializedData.containsKey('latLng')
-        ? latLngFromString(serializedData['latLng'] as String)
-        : const LatLng(0.0, 0.0),
+        ? latLngFromString(serializedData['latLng'] as String) // Parse latLng
+        : const LatLng(0.0, 0.0), // Default value if not provided
     'name': serializedData['name'] ?? '',
     'address': serializedData['address'] ?? '',
     'city': serializedData['city'] ?? '',
@@ -128,9 +136,11 @@ FFPlace placeFromString(String placeStr) {
   );
 }
 
+// Function to convert string to FFUploadedFile
 FFUploadedFile uploadedFileFromString(String uploadedFileStr) =>
     FFUploadedFile.deserialize(uploadedFileStr);
 
+// Enumeration for parameter types
 enum ParamType {
   int,
   double,
@@ -145,6 +155,7 @@ enum ParamType {
   JSON,
 }
 
+// Function to deserialize a parameter
 dynamic deserializeParam<T>(
   String? param,
   ParamType paramType,
@@ -186,7 +197,7 @@ dynamic deserializeParam<T>(
       case ParamType.LatLng:
         return latLngFromString(param);
       case ParamType.Color:
-        return fromCssColor(param);
+        return fromCssColor(param); // Convert CSS color string to Color
       case ParamType.FFPlace:
         return placeFromString(param);
       case ParamType.FFUploadedFile:
