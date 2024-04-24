@@ -1,3 +1,4 @@
+//Provides more location data. 
 import 'lat_lng.dart';
 
 class FFPlace {
