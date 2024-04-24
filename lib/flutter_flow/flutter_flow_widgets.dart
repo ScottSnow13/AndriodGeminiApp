@@ -1,7 +1,9 @@
+// Import necessary packages and files
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
+// Options class for configuring the button
 class FFButtonOptions {
   const FFButtonOptions({
     this.textStyle,
@@ -24,59 +26,64 @@ class FFButtonOptions {
     this.hoverElevation,
     this.maxLines,
   });
-
-  final TextStyle? textStyle;
-  final double? elevation;
-  final double? height;
-  final double? width;
-  final EdgeInsetsGeometry? padding;
-  final Color? color;
-  final Color? disabledColor;
-  final Color? disabledTextColor;
-  final int? maxLines;
-  final Color? splashColor;
-  final double? iconSize;
-  final Color? iconColor;
-  final EdgeInsetsGeometry? iconPadding;
-  final BorderRadius? borderRadius;
-  final BorderSide? borderSide;
-  final Color? hoverColor;
-  final BorderSide? hoverBorderSide;
+  
+//properties of buttons and icons
+  final TextStyle? textStyle; 
+  final double? elevation; 
+  final double? height; 
+  final double? width; 
+  final EdgeInsetsGeometry? padding; 
+  final Color? color; 
+  final Color? disabledColor; 
+  final Color? disabledTextColor; 
+  final int? maxLines; 
+  final Color? splashColor; 
+  final double? iconSize; 
+  final Color? iconColor; 
+  final EdgeInsetsGeometry? iconPadding; 
+  final BorderRadius? borderRadius; 
+  final BorderSide? borderSide; 
+  final Color? hoverColor; 
+  final BorderSide? hoverBorderSide; 
   final Color? hoverTextColor;
-  final double? hoverElevation;
+  final double? hoverElevation; 
 }
 
 class FFButtonWidget extends StatefulWidget {
   const FFButtonWidget({
-    super.key,
+    Key? key,
     required this.text,
     required this.onPressed,
     this.icon,
     this.iconData,
     required this.options,
     this.showLoadingIndicator = true,
-  });
+  }) : super(key: key);
 
-  final String text;
-  final Widget? icon;
-  final IconData? iconData;
-  final Function()? onPressed;
-  final FFButtonOptions options;
-  final bool showLoadingIndicator;
+  final String text; // Text to be displayed on the button
+  final Widget? icon; // Custom widget icon
+  final IconData? iconData; // IconData for the icon
+  final Function()? onPressed; // Callback when button is pressed
+  final FFButtonOptions options; // Options to configure the button
+  final bool showLoadingIndicator; // Whether to show loading indicator
 
   @override
   State<FFButtonWidget> createState() => _FFButtonWidgetState();
 }
 
 class _FFButtonWidgetState extends State<FFButtonWidget> {
-  bool loading = false;
+  bool loading = false; // State to track loading state of the button
 
+  // Returns the maximum number of lines allowed for the button text
   int get maxLines => widget.options.maxLines ?? 1;
+
+  // Returns the text to be displayed on the button
   String? get text =>
       widget.options.textStyle?.fontSize == 0 ? null : widget.text;
 
   @override
   Widget build(BuildContext context) {
+    // Widget to display loading indicator or text
     Widget textWidget = loading
         ? SizedBox(
             width: widget.options.width == null
@@ -102,6 +109,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
             overflow: TextOverflow.ellipsis,
           );
 
+    // Callback function for button press
     final onPressed = widget.onPressed != null
         ? (widget.showLoadingIndicator
             ? () async {
@@ -120,6 +128,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
             : () => widget.onPressed!())
         : null;
 
+    // Button style based on state
     ButtonStyle style = ButtonStyle(
       shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
         (states) {
@@ -183,6 +192,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
       ),
     );
 
+    // Check if button has an icon and create appropriate button
     if ((widget.icon != null || widget.iconData != null) && !loading) {
       Widget icon = widget.icon ??
           FaIcon(
@@ -191,6 +201,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
             color: widget.options.iconColor,
           );
 
+      // Return IconButton if there's no text
       if (text == null) {
         return Container(
           height: widget.options.height,
@@ -213,6 +224,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
           ),
         );
       }
+      // Return ElevatedButton.icon if there's text
       return SizedBox(
         height: widget.options.height,
         width: widget.options.width,
@@ -228,6 +240,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
       );
     }
 
+    // Return ElevatedButton if there's only text
     return SizedBox(
       height: widget.options.height,
       width: widget.options.width,
@@ -240,6 +253,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
   }
 }
 
+// Extension method to remove color from TextStyle
 extension _WithoutColorExtension on TextStyle {
   TextStyle withoutColor() => TextStyle(
         inherit: inherit,
@@ -265,14 +279,11 @@ extension _WithoutColorExtension on TextStyle {
         debugLabel: debugLabel,
         fontFamily: fontFamily,
         fontFamilyFallback: fontFamilyFallback,
-        // The _package field is private so unfortunately we can't set it here,
-        // but it's almost always unset anyway.
-        // package: _package,
         overflow: overflow,
       );
 }
 
-// Slightly hacky method of getting the layout width of the provided text.
+// Method to calculate the width of the text
 double? _getTextWidth(String? text, TextStyle? style, int maxLines) =>
     text != null
         ? (TextPainter(
