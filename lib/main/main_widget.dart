@@ -116,11 +116,14 @@ class _MainWidgetState extends State<MainWidget> {
                           ),
                         ),
                       ),
+                   // Check if an image has been uploaded
                     if (FFAppState().ImagePath == 'uploaded')
-                      Align(
+                    // Align the text slightly above the center of the screen
+                    Align(
                         alignment: const AlignmentDirectional(0.0, -0.7),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
+                          // Display the generated output text
                           child: Text(
                             valueOrDefault<String>(
                               _model.output,
