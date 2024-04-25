@@ -4,7 +4,7 @@ This GitHub repo is for the Animalize app created using Dart and bulit in Flutte
 
 The first step is to download the ```Animalize.apk``` file that was uploaded to this repo. Next you will need to update your version of Android Studio to either Igunana or Jellyfish to be able to run this app. The next steps will be outlined in pictures. 
 
-First open Android Studio and select the three drop down dotes then the "Profile or Debug APK" option.
+First open Android Studio and select the three drop down dots then the "Profile or Debug APK" option.
 ![Picture 1](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/641269dd-d81e-41b0-a983-829f6bce87cd)
 In the menu that pops up select the ```Animalize.apk``` whereever its located on your computer.
 ![Picture 2](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/38cdb56d-f84a-4585-8406-c6aeff39838f)
