@@ -1,3 +1,3 @@
 # Animalize
 
-A new Flutter project.
+This GitHub repo is for the Animalize app created using Dart and bulit in Flutter.
