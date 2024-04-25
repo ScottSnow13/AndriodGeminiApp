@@ -12,7 +12,7 @@ Wait for the APK to finish loading then from the top menu select "Tools" then in
 ![Picture 3](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/57e84173-a650-471d-8613-99ce08101f35)
 Once the menu loads traverse to the "Plugins" panel on the left of the menu, then in the search bar type "Flutter". Install the Flutter plugin then restart Android Studios and reload the APK file.
 ![Picture 4](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/febadbf8-5b8a-4f7c-8e65-91bd1c6d3c10)
-Make sure you have a emulated device created using an SDK version of 34 otherwise the app will not work. Then just click the run button at the top of the screen to install and run the app on the emulated device.
+Make sure you have an emulated device created using an SDK version of 34 otherwise the app will not work. Then just click the run button at the top of the screen to install and run the app on the emulated device.
 ![Picture 5](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/a294a5f3-4e15-4cf5-b975-f52acead2975)
-The app should then be installed on the device and automatically open and run. Test the app by providing it pictures of animals saved in your gallery or take a picture with the camera then upload.
+The app should then be installed on the device and automatically open and run. Test the app by providing it pictures of animals saved in your gallery or take a picture with the camera then upload it.
 ![Picture 6](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/825c9f86-5817-463a-8e80-7432f9dee4ce)
