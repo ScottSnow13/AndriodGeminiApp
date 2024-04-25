@@ -8,7 +8,7 @@ First open Android Studio and select the three drop down dots then the "Profile 
 ![Picture 1](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/641269dd-d81e-41b0-a983-829f6bce87cd)
 In the menu that pops up select the "```Animalize.apk```" wherever its located on your computer.
 ![Picture 2](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/38cdb56d-f84a-4585-8406-c6aeff39838f)
-Wait for the apk to finish loading then from the top menu select "Tools" then in the drop down select "SDK Manager".
+Wait for the APK to finish loading then from the top menu select "Tools" then in the drop down select "SDK Manager".
 ![Picture 3](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/57e84173-a650-471d-8613-99ce08101f35)
 Once the menu loads traverse to the "Plugins" panel on the left of the menu, then in the search bar type "Flutter". Install the Flutter plugin then restart Android Studios and reload the APK file.
 ![Picture 4](https://github.com/ScottSnow13/AndroidAnimalize/assets/117798417/febadbf8-5b8a-4f7c-8e65-91bd1c6d3c10)
